@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Number Display Page</title>
+</head>
+
+<body>
+	<h2>Number Display Page</h2>
+	<div id="numberDisplay"></div>
+	<div id="numberInWords"></div>
+
+	<script>
+		// Function to convert a number to words using the UK billion definition
+		// Function to convert a number to words using the UK trillion definition
+		function numberToWords(number) {
+			const units = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+			const teens = ['', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+			const tens = ['', 'Ten', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+			function convertBelowThousand(num) {
+				if (num === 0) return '';
+				else if (num < 10) return units[num];
+				else if (num < 20) return teens[num - 10];
+				else {
+					const ten = Math.floor(num / 10);
+					const unit = num % 10;
+					return tens[ten] + ' ' + units[unit];
+				}
+			}
+
+			if (number === 0) return 'Zero';
+
+			const trillions = Math.floor(number / 1000000000000); // UK trillion
+			const billions = Math.floor((number % 1000000000000) / 1000000000); // UK billion
+			const millions = Math.floor((number % 1000000000) / 1000000);
+			const thousands = Math.floor((number % 1000000) / 1000);
+			const remainder = number % 1000;
+
+			const result = (trillions ? convertBelowThousand(trillions) + ' Trillion ' : '') +
+				(billions ? convertBelowThousand(billions) + ' Billion ' : '') +
+				(millions ? convertBelowThousand(millions) + ' Million ' : '') +
+				(thousands ? (thousands === 1 ? 'Thousand ' : convertBelowThousand(thousands) + ' Thousand ') : '') +
+				convertBelowThousand(remainder);
+
+			return result.trim();
+		}
+
+
+		// Get the URL parameter 'number' and parse it as an integer
+		const urlParams = new URLSearchParams(window.location.search);
+		const numberParam = parseInt(urlParams.get('number'), 10); // Parse as an integer
+
+		// Display the number and its word representation on the page
+		if (!isNaN(numberParam)) {
+			const numericDisplay = `Number: ${numberParam}`;
+			//const wordDisplay = `In Words: ${numberToWords(numberParam)}`;
+			const wordDisplay = 'In Words: ' + numberToWords(Number(numericDisplay.split(' ')[1])); // Extract the number and convert it to a number
+
+			document.getElementById('numberDisplay').textContent = numericDisplay;
+			document.getElementById('numberInWords').textContent = wordDisplay;
+			document.title = numericDisplay;
+		} else {
+			document.getElementById('numberDisplay').textContent = 'No valid number provided in the URL.';
+			document.title = 'Number Display Page';
+		}
+	</script>
+</body>
+
+</html>
